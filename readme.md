@@ -60,8 +60,8 @@ Download the YOLOv3 network:
 Bill of material (BOM)
 ----------------------
 
-    - Arduino Board. I'm using a M0 Pro, but probably any Arduino that can control a servo should work.
-    - [Electric Water Pistol](https://www.amazon.de/-/en/Electric-Automatic-Splasher-Children-Powered/dp/B0C6XPT425/)
-    - Webcam. Most USB webcams should work.
+ - Arduino Board. I'm using a M0 Pro, but probably any Arduino that can control a servo should work.
+ - [Electric Water Pistol](https://www.amazon.de/-/en/Electric-Automatic-Splasher-Children-Powered/dp/B0C6XPT425/)
+ - Webcam. Most USB webcams should work.
 
 
