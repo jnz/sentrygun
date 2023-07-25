@@ -81,11 +81,11 @@ Run the main script:
 Bill of material (BOM)
 ----------------------
 
-    - Arduino Board. I'm using a M0 Pro, but probably any Arduino that can control a servo should work.
-    - [Electric Water Pistol](https://www.amazon.de/-/en/Electric-Automatic-Splasher-Children-Powered/dp/B0C6XPT425/)
-    - Webcam. Most USB webcams should work.
-    - A servo motor with PWM control
-    - Two cable ties to attach the servo motor to the trigger of the water pistol
+ - Arduino Board. I'm using a M0 Pro, but probably any Arduino that can control a servo should work.
+ - [Electric Water Pistol](https://www.amazon.de/-/en/Electric-Automatic-Splasher-Children-Powered/dp/B0C6XPT425/)
+ - Webcam. Most USB webcams should work.
+ - A servo motor with PWM control
+ - Two cable ties to attach the servo motor to the trigger of the water pistol
 
 
 Other
