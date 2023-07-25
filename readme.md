@@ -104,6 +104,11 @@ Bill of material (BOM)
  - Two cable ties to attach the servo motor to the trigger of the water pistol
 
 
+Inspired by
+-----------
+
+The overengineered solution to a pidgeon problem by Max Nagy: [https://maxnagy.com/posts/pigeons/](https://maxnagy.com/posts/pigeons/)
+
 Other
 -----
 
