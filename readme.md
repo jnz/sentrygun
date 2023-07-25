@@ -1,6 +1,8 @@
 YOLO SENTRY
 ===========
 
+![GIF](img/gun_cut.gif) ![cat](img/cat.jpg)
+
 Basic Idea
 ----------
 
@@ -30,9 +32,9 @@ You can use this to fend away birds, cats, people, etc.
                        ▼                                  │                     ├──┘
                ┌────────────────┐                         └─┬─────┬──┬──┬───────┘
                │                │                           │     │  │  │
-               │                │                           │     └──┴──┤
+               │                │  Pin 9 (PWM)              │     └──┴──┤
                │  Arduino       ├───────────────────────────┼─────►Servo│
-               │                │                           │     ┌─────┘
+               │                │  +5V, GND                 │     ┌─────┘
                │                │                           └─────┘
                └────────────────┘
 
@@ -65,6 +67,8 @@ Download the Arduino IDE
 Upload the Arduino sketch in the following subfolder to your Arduino board:
 
     arduino_sentry/arduino_sentry.ino
+
+The Arduino is connected to the servo motor (yellow cable) via PIN9. Black is ground and red is connected to 5V.
 
 Connect the Arduino via USB to your computer. Check the serial port, it should normally be something like
 
