@@ -6,11 +6,23 @@ YOLO SENTRY
 Basic Idea
 ----------
 
-The basic idea is that a simple Python script is reading in frames from a
-webcam, the tries to detect objects within that image.  If a certain object
-class is found, a command is sent to an Arduino board that is controlling an
-actuator, i.e. a servo connected to a water pistol.
-You can use this to fend away birds, cats, people, etc.
+Imagine the scene: a humble Python script, operating much like the digital eyes
+of our operation, tirelessly retrieves visual frames from a webcam in
+real-time. Then, in a triumphant demonstration of machine learning, it
+meticulously scans these frames, engaging in a relentless pursuit for the
+identification of specific objects.
+
+Upon the triumphant detection of our predefined object classes, it doesn't just
+celebrate quietly. Oh no, it promptly dispatches a directive, reminiscent of a
+sci-fi communique, to the waiting, ever-ready Arduino board. This board, the
+unassuming nexus of our setup, controls an actuator - a rather nifty servo, to
+be precise.
+
+And what's that, you ask, connected to this servo? It's no less than the water
+pistol of destiny! Now imagine employing this intricate setup to playfully
+deter a host of intruders - birds, cats, perhaps even an unsuspecting passerby.
+With this awe-inspiring fusion of Python, Arduino, and a bit of creative water
+usage, your space is your fortress, and you, the techno-wizard of its defense!
 
 
 
