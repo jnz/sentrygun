@@ -12,8 +12,8 @@ void loop() {
     String data = Serial.readString();  // read it and store it in 'data'
     data.trim();
     if (data == "FIRE!") {  // if fire command is received
-      myservo.write(25);  // tell servo to go to fire position
-      delay(50); // wait for a bit
+      myservo.write(40);  // tell servo to go to fire position
+      delay(250); // wait for a bit
       myservo.write(0); // reset servo position
     }
   }
