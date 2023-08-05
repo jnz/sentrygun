@@ -69,7 +69,6 @@ Install the required Python modules (assuming Python 3 is installed on your syst
 Download the YOLOv3 network:
 
     wget https://pjreddie.com/media/files/yolov3.weights
-    wget https://github.com/pjreddie/darknet/blob/master/data/coco.names
     wget https://github.com/pjreddie/darknet/raw/master/cfg/yolov3.cfg
 
 Download the Arduino IDE
