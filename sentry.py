@@ -7,6 +7,7 @@ import threading
 # Constants
 TRIGGER_RECOVERY_TIME_SEC   = 5.0            # only fire every X seconds
 TRIGGER_CLASS               = 15             # 0 = person, 15 = cat, 16 = dog, 46 = banana, 47 = apple, 49 = orange
+TRIGGER_MIN_AREA            = 1000           # Min. change in image to start object detection
 WEBCAM_INDEX                = 0              # Index of installed webcams
 TRIGGER_BAUDRATE            = 9600           # Arduino baudrate
 TRIGGER_SERIAL              = '/dev/ttyACM0' # Serial port for Arduino connection
@@ -62,6 +63,8 @@ if SAVE_VIDEO:
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     video_out = cv2.VideoWriter(SAVE_VIDEO_FILE, fourcc, SAVE_VIDEO_FPS, (width, height))
 
+ret, prev_frame = cap.read()
+
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -75,55 +78,67 @@ while True:
         print("\rFPS: %i" % (frame_counter), end="") # return cursor to beginning of line
         frame_counter = 0
 
-    # Detecting objects
-    blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-    net.setInput(blob)
-    outs = net.forward(output_layers)
-    class_ids = []
-    confidences = []
-    boxes = []
+    diff = cv2.absdiff(frame, prev_frame)
+    prev_frame = frame
+    gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY) # Convert the difference to grayscale
+    _, thresh = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY) # Apply a binary threshold to the grayscale image
+    contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) # Find contours in the thresholded image
+    # Filter contours based on area
+    significant_change_detected = False
+    for contour in contours:
+        if cv2.contourArea(contour) > TRIGGER_MIN_AREA:
+            significant_change_detected = True
 
-    # Showing detected objects in webcam live image
-    for out in outs:
-        for detection in out:
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
+    if significant_change_detected:
+        # Detecting objects
+        blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+        net.setInput(blob)
+        outs = net.forward(output_layers)
+        class_ids = []
+        confidences = []
+        boxes = []
 
-            if confidence > MIN_CONFIDENCE and class_id in list_of_marked_objects:
-                # Object detected, save coordinates for drawing a rectangle
-                center_x = int(detection[0] * width)
-                center_y = int(detection[1] * height)
-                w = int(detection[2] * width)
-                h = int(detection[3] * height)
-                x = int(center_x - w / 2)
-                y = int(center_y - h / 2)
-                boxes.append([x, y, w, h])
-                confidences.append(float(confidence))
-                class_ids.append(class_id)
+        # Showing detected objects in webcam live image
+        for out in outs:
+            for detection in out:
+                scores = detection[5:]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
 
-                # Send actuator command if conditions are met
-                if (confidence > TRIGGER_MIN_CONFIDENCE and
-                    class_id == TRIGGER_CLASS and
-                    time.time() - timestamp_last_ser_cmd > TRIGGER_RECOVERY_TIME_SEC and
-                    trigger_enabled):
-                    msg = TRIGGER_SERIAL_COMMAND
-                    ser.write(msg.encode())
-                    timestamp_last_ser_cmd = time.time()
-                    if SAVE_VIDEO:
-                        video_out.write(frame)
+                if confidence > MIN_CONFIDENCE and class_id in list_of_marked_objects:
+                    # Object detected, save coordinates for drawing a rectangle
+                    center_x = int(detection[0] * width)
+                    center_y = int(detection[1] * height)
+                    w = int(detection[2] * width)
+                    h = int(detection[3] * height)
+                    x = int(center_x - w / 2)
+                    y = int(center_y - h / 2)
+                    boxes.append([x, y, w, h])
+                    confidences.append(float(confidence))
+                    class_ids.append(class_id)
 
-    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+                    # Send actuator command if conditions are met
+                    if (confidence > TRIGGER_MIN_CONFIDENCE and
+                        class_id == TRIGGER_CLASS and
+                        time.time() - timestamp_last_ser_cmd > TRIGGER_RECOVERY_TIME_SEC and
+                        trigger_enabled):
+                        msg = TRIGGER_SERIAL_COMMAND
+                        ser.write(msg.encode())
+                        timestamp_last_ser_cmd = time.time()
+                        if SAVE_VIDEO:
+                            video_out.write(frame)
 
-    font = cv2.FONT_HERSHEY_PLAIN
-    for i in range(len(boxes)):
-        if i in indexes:
-            x, y, w, h = boxes[i]
-            confidence_percent = confidences[i] * 100
-            label = f"{str(classes[class_ids[i]])} {confidence_percent:.1f}%"
-            color = colors[i]
-            cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
-            cv2.putText(frame, label, (x, y + 30), font, 2, color, 3)
+        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+
+        font = cv2.FONT_HERSHEY_PLAIN
+        for i in range(len(boxes)):
+            if i in indexes:
+                x, y, w, h = boxes[i]
+                confidence_percent = confidences[i] * 100
+                label = f"{str(classes[class_ids[i]])} {confidence_percent:.1f}%"
+                color = colors[i]
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                cv2.putText(frame, label, (x, y + 30), font, 2, color, 3)
 
     if cv2.getWindowProperty(WINDOW_TITLE, cv2.WND_PROP_VISIBLE) < 1:
         break
